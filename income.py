@@ -96,3 +96,94 @@ print (f'Among foreigners : (nb_foreign_above/nb_foreign*100:.0f)% earn ›50K /
 ###normalization
 no_native_above / nb_native nb_native_below / =nb_native
 nb_foreign_above /= nb_foreign nb foreign_below /= nb_foreign nb_native_above, nb_native_below, nb_foreign_above, nb_foreign_below
+print(f'Among Males : {nb_male_above/nb_male*100:.0f}% earn >50K // {nb_male_below/nb_male*100:.0f}% earn <=50K')
+print(f'Among Females : {nb_female_above/nb_female*100:.0f}% earn >50K // {nb_female_below/nb_female*100:.0f}% earn <=50K')
+num_feat = df.select_dtypes(include=['float', 'int']).columns
+num_feat
+sns. set (style="white")
+###Compute the correlation matrix
+corr = df[num_feat] .corr)
+###Generate a mask for the upper triangle
+mask = np. zeros_like(corr, dtype=np.bool)
+mask [np.triu_indices_from(mask)] - True
+###Set up the matplotlib figure
+f, ax = plt. subplots(figsize=(7, 6))
+###Generate a custom diverging colormap
+cap = sns.diverging_palette(220, 10, as_cmap=True)
+###Draw the heatmap with the mask and correct aspect ratio
+Sns.heatmap（corr, mask=mask, cmap=cmap,vmax=.3, center=8，
+square-True, linewidths=.$, annot=True, cbar_kws={"shrink": •5})
+df[ 'income'] = pd get _dummies(df['income'], prefix='income', drop_first=True)
+y = df. income
+df = df.drop (columns=[' income' ])
+print(f'Ratio above 50k: (y. sum()/len(y) *100: .2f}%')
+cols=list(df.columns)
+cols
+###cat_columns = ['workclass', 'education", 'marital-status', "occupation', 'relationship', 'race', 'sex', 'native-country"]
+df.head ()
+selected_feat = cols.copy()
+selected_feat.remove('US native')
+selected_feat
+df_final = df[selected_feat]
+cat_feat = df_final.select_dtypes(include=['object']).columns
+X = pd.get_dummies(df_final[cat_feat], drop_first=True)
+###X = pd.concat([df_final[continuous_columns], df_dummies], axis=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+def print_score(model, name):
+model.fit(X_train, y_train)
+print('Accuracy score of the', name, f': on train = {model.score(X_train, y_train)*100:.2f}%, on test = {model.score(X_test, y_test)*100:.2f}
+print_score(LogisticRegression(), 'LogisticReg')
+print_score(DecisionTreeClassifier(), 'DecisionTreeClf')
+rf = RandomForestClassifier().fit(X_train, y_train)
+print(f'Accuracy score of the RandomForrest: on train = {rf.score(X_train, y_train)*100:.2f}%, on test = {rf.score(X_test, y_test)*100:.2f}
+###Fit an Extra Tree model to the data
+print_score(DecisionTreeClassifier(), 'ExtraTreesClf')
+rfc = RandomForestClassifier()
+param_grid = {
+'n_estimators': [50, 100, 150, 200, 250],
+'max_features': [1, 2, 3, 4, 5],
+'max_depth' : [4, 6, 8]
+}
+rfc_cv = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
+rfc_cv.fit(X_train, y_train)
+GridSearchCV(cv=5, error_score='raise‐deprecating',estimator=RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+max_depth=None, max_features='auto', max_leaf_nodes=None,
+min_impurity_decrease=0.0, min_impurity_split=None,
+min_samples_leaf=1, min_samples_split=2,
+min_weight_fraction_leaf=0.0, n_estimators='warn', n_jobs=None,
+oob_score=False, random_state=None, verbose=0,
+warm_start=False),
+fit_params=None, iid='warn', n_jobs=None,
+param_grid={'n_estimators': [50, 100, 150, 200, 250], 'max_features': [1, 2, 3, 4, 5], 'max_depth': [4, 6, 8]},
+pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+scoring=None, verbose=0)
+rfc_cv.best_params_
+{'max_depth': 8, 'max_features': 5, 'n_estimators': 50}
+rfc_best = RandomForestClassifier(max_depth=8, max_features=5, n_estimators=250).fit(X_train, y_train)
+print(f'Accuracy score of the RandomForrest: on train = {rfc_best.score(X_train, y_train)*100:.2f}%, on test = {rfc_best.score(X_test, y_test)*100:.2f}
+###indexes of columns which are the most important
+np.argsort(rf.feature_importances_)[‐16:]
+###most important features
+[list(X.columns)[i] for i in np.argsort(rf.feature_importances_)[‐16:]][::‐1]
+###Feature importances
+features = X.columns
+importances = rf.feature_importances_
+indices = np.argsort(importances)[::‐1]
+num_features = len(importances)
+###Plot the feature importances of the tree
+plt.figure(figsize=(16, 4))
+plt.title("Feature importances")
+plt.bar(range(num_features), importances[indices], color="g", align="center")
+plt.xticks(range(num_features), [features[i] for i in indices], rotation='45')
+plt.xlim([‐1, num_features])
+plt.show()
+###Print values
+for i in indices:
+print ("{0} ‐ {1:.3f}".format(features[i], importances[i]))
+(pd.Series(rf.feature_importances_, index=X_train.columns)
+.nlargest(15)
+.plot(kind='barh'))
+extree = ExtraTreesClassifier().fit(X_train, y_train)
+(pd.Series(extree.feature_importances_, index=X_train.columns)
+.nlargest(15)
+.plot(kind='barh'))
