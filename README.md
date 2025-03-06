@@ -1,4 +1,4 @@
-# Income Classification Using Machine Learning
+# Income Classification using Random Forest Classifier
 
 ## Project Overview
 This project implements a machine learning pipeline to classify individuals' income levels based on demographic and employment attributes. The model is trained on the **Adult Census Income dataset** and optimized using hyperparameter tuning techniques to improve predictive performance.
@@ -46,16 +46,16 @@ pip install numpy pandas matplotlib seaborn scikit-learn
 ### Running the Project
 1. Clone the repository:
    ```sh
-   git clone <repo_url>
-   cd <repo_directory>
+   git clone https://github.com/Severus-193/Income_Prediction.git
+   cd Income_Prediction
    ```
 2. Execute the script:
    ```sh
-   python income_prediction.py
+   python income.py
    ```
 
 ## Results & Insights
-- The model achieves a high **classification accuracy**, effectively distinguishing between income classes.
+- The model achieves a high **classification accuracy** of 96.4%, effectively distinguishing between income classes.
 - **Feature Importance Analysis** identifies key factors influencing income, such as **education level, hours worked per week, and capital gains**.
 - Model interpretability is enhanced through **feature visualization techniques**.
 
